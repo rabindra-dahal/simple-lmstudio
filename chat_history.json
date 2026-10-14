@@ -1,0 +1,450 @@
+[
+    {
+        "timestamp": "2026-10-14 14:00:00",
+        "model_utilized": "Llama-3.2-3B-Instruct-Q4_K_M.gguf",
+        "configuration": {
+            "temperature": 0.7
+        },
+        "telemetry": {
+            "system_ram_utilization_percent": 88.1
+        },
+        "conversation": {
+            "user_prompt": "hy",
+            "assistant_response": "It's nice to meet you. Is there something I can help you with or would you like to chat?"
+        }
+    },
+    {
+        "timestamp": "2026-10-14 14:00:10",
+        "model_utilized": "Llama-3.2-3B-Instruct-Q4_K_M.gguf",
+        "configuration": {
+            "temperature": 0.7
+        },
+        "telemetry": {
+            "system_ram_utilization_percent": 88.1
+        },
+        "conversation": {
+            "user_prompt": "hy",
+            "assistant_response": "It's nice to meet you. Is there something I can help you with or would you like to chat?"
+        }
+    },
+    {
+        "timestamp": "2026-10-14 14:09:05",
+        "model_utilized": "Llama-3.2-3B-Instruct-Q4_K_M.gguf",
+        "configuration": {
+            "temperature": 0.7
+        },
+        "telemetry": {
+            "system_ram_utilization_percent": 84.3
+        },
+        "conversation": {
+            "user_prompt": "hy",
+            "assistant_response": "It's nice to meet you. Is there something I can help you with or would you like to chat?"
+        }
+    },
+    {
+        "timestamp": "2026-10-14 14:09:49",
+        "model_utilized": "Llama-3.2-3B-Instruct-Q4_K_M.gguf",
+        "configuration": {
+            "temperature": 0.7
+        },
+        "telemetry": {
+            "system_ram_utilization_percent": 90.9
+        },
+        "conversation": {
+            "user_prompt": "how are you response in 5 sentence",
+            "assistant_response": "I'm here to provide accurate and helpful information to assist you. I'm a precise and knowledgeable local AI assistant, trained to offer insights and guidance on various topics. My responses are based on the latest available data and information, ensuring you receive up-to-date answers. Whether you need information on local attractions, restaurants, or services, I'm here to help. Please feel free to ask me any questions, and I'll do my best to provide a helpful response."
+        }
+    },
+    {
+        "timestamp": "2026-10-14 14:23:43",
+        "model_utilized": "Llama-3.2-3B-Instruct-Q4_K_M.gguf",
+        "configuration": {
+            "temperature": 0.7
+        },
+        "telemetry": {
+            "system_ram_utilization_percent": 84.0
+        },
+        "conversation": {
+            "user_prompt": "hy",
+            "assistant_response": "It's nice to meet you. Is there something I can help you with or would you like to chat?"
+        }
+    },
+    {
+        "timestamp": "2026-10-14 14:24:12",
+        "model_utilized": "Llama-3.2-3B-Instruct-Q4_K_M.gguf",
+        "configuration": {
+            "temperature": 0.7
+        },
+        "telemetry": {
+            "system_ram_utilization_percent": 89.2
+        },
+        "conversation": {
+            "user_prompt": "It's nice to meet you. Is there something I can help you with or would you like to chat?",
+            "assistant_response": "Nice to meet you too. I'm happy to chat with you, but I'm also here to assist you with any questions or tasks you may have. Since I'm a local AI assistant, I have knowledge about the local area and can provide information on things like restaurants, attractions, and events.\n\nIf you're looking for recommendations or have specific questions, feel free to ask. I can also help with tasks like providing directions, translating text, or even generating text for you.\n\nThat being said, it's also nice to take a break from providing information and just have a conversation. What brings you here today? Are you new to the area or just visiting?"
+        }
+    },
+    {
+        "timestamp": "2026-10-14 14:24:43",
+        "model_utilized": "Llama-3.2-3B-Instruct-Q4_K_M.gguf",
+        "configuration": {
+            "temperature": 0.7
+        },
+        "telemetry": {
+            "system_ram_utilization_percent": 89.3
+        },
+        "conversation": {
+            "user_prompt": "Nice to meet you too. I'm happy to chat with you, but I'm also here to assist you with any questions or tasks you may have. Since I'm a local AI assistant, I have knowledge about the local area and can provide information on things like restaurants, attractions, and events.\n\nIf you're looking for recommendations or have specific questions, feel free to ask. I can also help with tasks like providing directions, translating text, or even generating text for you.\n\nThat being said, it's also nice to take a break from providing information and just have a conversation. What brings you here today? Are you new to the area or just visiting?",
+            "assistant_response": "Thank you for the warm welcome. I'm glad to have a chance to chat with you too. I'm a bit of a new face in the area, actually. I've been designed to assist with various tasks and answer questions for locals, but I haven't had a chance to explore the area much yet.\n\nI'm still learning about the local culture, customs, and way of life. I'd love to hear more about the community and what makes this place special. Are there any hidden gems or local favorites that I should know about?\n\nIt's also nice to have a conversation without having to follow a specific script or provide information on a particular topic. I'm just happy to chat and get to know you better. What about you? What do you like to do in your free time, and how do you like living in this area?"
+        }
+    },
+    {
+        "timestamp": "2026-10-14 14:36:40",
+        "model_utilized": "Llama-3.2-3B-Instruct-Q4_K_M.gguf",
+        "configuration": {
+            "temperature": 0.7
+        },
+        "telemetry": {
+            "system_ram_utilization_percent": 84.1
+        },
+        "conversation": {
+            "user_prompt": "hy",
+            "assistant_response": "It's nice to meet you. Is there something I can help you with or would you like to chat?"
+        }
+    },
+    {
+        "timestamp": "2026-10-14 14:36:54",
+        "model_utilized": "Llama-3.2-3B-Instruct-Q4_K_M.gguf",
+        "configuration": {
+            "temperature": 0.7
+        },
+        "telemetry": {
+            "system_ram_utilization_percent": 90.7
+        },
+        "conversation": {
+            "user_prompt": "hy",
+            "assistant_response": "It's nice to meet you. Is there something I can help you with or would you like to chat?"
+        }
+    },
+    {
+        "timestamp": "2026-10-14 14:42:22",
+        "model_utilized": "Llama-3.2-3B-Instruct-Q4_K_M.gguf",
+        "configuration": {
+            "temperature": 0.7
+        },
+        "telemetry": {
+            "system_ram_utilization_percent": 85.9
+        },
+        "conversation": {
+            "user_prompt": "hy",
+            "assistant_response": "It's nice to meet you. Is there something I can help you with or would you like to chat?"
+        }
+    },
+    {
+        "timestamp": "2026-10-14 14:42:56",
+        "model_utilized": "Llama-3.2-3B-Instruct-Q4_K_M.gguf",
+        "configuration": {
+            "temperature": 0.7
+        },
+        "telemetry": {
+            "system_ram_utilization_percent": 91.1
+        },
+        "conversation": {
+            "user_prompt": "hy",
+            "assistant_response": "It's nice to meet you. Is there something I can help you with or would you like to chat?"
+        }
+    },
+    {
+        "timestamp": "2026-10-14 14:43:20",
+        "model_utilized": "Llama-3.2-3B-Instruct-Q4_K_M.gguf",
+        "configuration": {
+            "temperature": 0.7
+        },
+        "telemetry": {
+            "system_ram_utilization_percent": 89.9
+        },
+        "conversation": {
+            "user_prompt": "It's nice to meet you. Is there something I can help you with or would you like to chat?",
+            "assistant_response": "Nice to meet you too. I'm happy to chat with you, but I'm also here to assist you with any questions or tasks you may have. Since I'm a local AI assistant, I have knowledge about the local area and can provide information on things like restaurants, attractions, and events.\n\nIf you're looking for recommendations or have specific questions, feel free to ask. I can also help with tasks like providing directions, translating text, or even generating text for you.\n\nThat being said, it's also nice to take a break from providing information and just have a conversation. What brings you here today? Are you new to the area or just visiting?"
+        }
+    },
+    {
+        "timestamp": "2026-10-14 14:47:55",
+        "model_utilized": "Llama-3.2-3B-Instruct-Q4_K_M.gguf",
+        "configuration": {
+            "temperature": 0.7
+        },
+        "telemetry": {
+            "system_ram_utilization_percent": 84.6
+        },
+        "conversation": {
+            "user_prompt": "hy",
+            "assistant_response": "It's nice to meet you. Is there something I can help you with or would you like to chat?"
+        }
+    },
+    {
+        "timestamp": "2026-10-14 14:48:22",
+        "model_utilized": "Llama-3.2-3B-Instruct-Q4_K_M.gguf",
+        "configuration": {
+            "temperature": 0.7
+        },
+        "telemetry": {
+            "system_ram_utilization_percent": 91.4
+        },
+        "conversation": {
+            "user_prompt": "It's nice to meet you. Is there something I can help you with or would you like to chat?",
+            "assistant_response": "Nice to meet you too. I'm happy to chat with you, but I'm also here to assist you with any questions or tasks you may have. Since I'm a local AI assistant, I have knowledge about the local area and can provide information on things like restaurants, attractions, and events.\n\nIf you're looking for recommendations or have specific questions, feel free to ask. I can also help with tasks like providing directions, translating text, or even generating text for you.\n\nThat being said, it's also nice to take a break from providing information and just have a conversation. What brings you here today? Are you new to the area or just visiting?"
+        }
+    },
+    {
+        "timestamp": "2026-10-14 14:54:08",
+        "model_utilized": "Llama-3.2-3B-Instruct-Q4_K_M.gguf",
+        "configuration": {
+            "temperature": 0.7
+        },
+        "telemetry": {
+            "system_ram_utilization_percent": 83.3
+        },
+        "conversation": {
+            "user_prompt": "hy",
+            "assistant_response": "It's nice to meet you. Is there something I can help you with or would you like to chat?"
+        }
+    },
+    {
+        "timestamp": "2026-10-14 14:55:02",
+        "model_utilized": "Llama-3.2-3B-Instruct-Q4_K_M.gguf",
+        "configuration": {
+            "temperature": 0.7
+        },
+        "telemetry": {
+            "system_ram_utilization_percent": 89.9
+        },
+        "conversation": {
+            "user_prompt": "hy",
+            "assistant_response": "It's nice to meet you. Is there something I can help you with or would you like to chat?"
+        }
+    },
+    {
+        "timestamp": "2026-10-14 15:01:46",
+        "model_utilized": "Llama-3.2-3B-Instruct-Q4_K_M.gguf",
+        "configuration": {
+            "temperature": 0.7
+        },
+        "telemetry": {
+            "system_ram_utilization_percent": 84.3
+        },
+        "conversation": {
+            "user_prompt": "hy",
+            "assistant_response": "It's nice to meet you. Is there something I can help you with or would you like to chat?"
+        }
+    },
+    {
+        "timestamp": "2026-10-14 15:11:53",
+        "model_utilized": "Llama-3.2-3B-Instruct-Q4_K_M.gguf",
+        "configuration": {
+            "temperature": 0.7
+        },
+        "telemetry": {
+            "system_ram_utilization_percent": 87.3
+        },
+        "conversation": {
+            "user_prompt": "hy",
+            "assistant_response": "It's nice to meet you. Is there something I can help you with or would you like to chat?"
+        }
+    },
+    {
+        "timestamp": "2026-10-14 15:12:04",
+        "model_utilized": "Llama-3.2-3B-Instruct-Q4_K_M.gguf",
+        "configuration": {
+            "temperature": 0.7
+        },
+        "telemetry": {
+            "system_ram_utilization_percent": 90.9
+        },
+        "conversation": {
+            "user_prompt": "hy",
+            "assistant_response": "It's nice to meet you. Is there something I can help you with or would you like to chat?"
+        }
+    },
+    {
+        "timestamp": "2026-10-14 15:21:19",
+        "model_utilized": "Llama-3.2-3B-Instruct-Q4_K_M.gguf",
+        "configuration": {
+            "temperature": 0.7
+        },
+        "telemetry": {
+            "system_ram_utilization_percent": 85.0
+        },
+        "conversation": {
+            "user_prompt": "hy",
+            "assistant_response": "It's nice to meet you. Is there something I can help you with or would you like to chat?"
+        }
+    },
+    {
+        "timestamp": "2026-10-14 15:21:39",
+        "model_utilized": "Llama-3.2-3B-Instruct-Q4_K_M.gguf",
+        "configuration": {
+            "temperature": 0.7
+        },
+        "telemetry": {
+            "system_ram_utilization_percent": 90.5
+        },
+        "conversation": {
+            "user_prompt": "It's nice to meet you. Is there something I can help you with or would you like to chat?",
+            "assistant_response": "Nice to meet you too. I'm happy to chat with you, but I'm also here to assist you with any questions or tasks you may have. Since I'm a local AI assistant, I have knowledge about the local area and can provide information on things like restaurants, attractions, and events.\n\nIf you're looking for recommendations or have specific questions, feel free to ask. I can also help with tasks like providing directions, translating text, or even generating text for you.\n\nThat being said, it's also nice to take a break from providing information and just have a conversation. What brings you here today? Are you new to the area or just visiting?"
+        }
+    },
+    {
+        "timestamp": "2026-10-14 15:23:34",
+        "model_utilized": "Llama-3.2-3B-Instruct-Q4_K_M.gguf",
+        "configuration": {
+            "temperature": 0.7
+        },
+        "telemetry": {
+            "system_ram_utilization_percent": 91.1
+        },
+        "conversation": {
+            "user_prompt": "hy",
+            "assistant_response": "It's nice to meet you. Is there something I can help you with or would you like to chat?"
+        }
+    },
+    {
+        "timestamp": "2026-10-14 15:26:32",
+        "model_utilized": "Llama-3.2-3B-Instruct-Q4_K_M.gguf",
+        "configuration": {
+            "temperature": 0.7
+        },
+        "telemetry": {
+            "system_ram_utilization_percent": 86.7
+        },
+        "conversation": {
+            "user_prompt": "hy",
+            "assistant_response": "It's nice to meet you. Is there something I can help you with or would you like to chat?"
+        }
+    },
+    {
+        "timestamp": "2026-10-14 15:26:52",
+        "model_utilized": "Llama-3.2-3B-Instruct-Q4_K_M.gguf",
+        "configuration": {
+            "temperature": 0.7
+        },
+        "telemetry": {
+            "system_ram_utilization_percent": 92.5
+        },
+        "conversation": {
+            "user_prompt": "It's nice to meet you. Is there something I can help you with or would you like to chat?",
+            "assistant_response": "Nice to meet you too. I'm happy to chat with you, but I'm also here to assist you with any questions or tasks you may have. Since I'm a local AI assistant, I have knowledge about the local area and can provide information on things like restaurants, attractions, and events.\n\nIf you're looking for recommendations or have specific questions, feel free to ask. I can also help with tasks like providing directions, translating text, or even generating text for you.\n\nThat being said, it's also nice to take a break from providing information and just have a conversation. What brings you here today? Are you new to the area or just visiting?"
+        }
+    },
+    {
+        "timestamp": "2026-10-14 15:27:11",
+        "model_utilized": "Llama-3.2-3B-Instruct-Q4_K_M.gguf",
+        "configuration": {
+            "temperature": 0.7
+        },
+        "telemetry": {
+            "system_ram_utilization_percent": 92.0
+        },
+        "conversation": {
+            "user_prompt": "hy",
+            "assistant_response": "It's nice to meet you. Is there something I can help you with or would you like to chat?"
+        }
+    },
+    {
+        "timestamp": "2026-10-14 16:49:07",
+        "model_utilized": "Llama-3.2-3B-Instruct-Q4_K_M.gguf",
+        "configuration": {
+            "temperature": 0.7
+        },
+        "telemetry": {
+            "system_ram_utilization_percent": 88.1
+        },
+        "conversation": {
+            "user_prompt": "hy",
+            "assistant_response": "It's nice to meet you. Is there something I can help you with or would you like to chat?"
+        }
+    },
+    {
+        "timestamp": "2026-10-14 16:50:10",
+        "model_utilized": "Llama-3.2-3B-Instruct-Q4_K_M.gguf",
+        "configuration": {
+            "temperature": 0.7
+        },
+        "telemetry": {
+            "system_ram_utilization_percent": 84.9
+        },
+        "conversation": {
+            "user_prompt": "hy",
+            "assistant_response": "It's nice to meet you. Is there something I can help you with or would you like to chat?"
+        }
+    },
+    {
+        "timestamp": "2026-10-14 16:55:09",
+        "model_utilized": "Llama-3.2-3B-Instruct-Q4_K_M.gguf",
+        "configuration": {
+            "temperature": 0.7
+        },
+        "telemetry": {
+            "system_ram_utilization_percent": 87.4
+        },
+        "conversation": {
+            "user_prompt": "hy",
+            "assistant_response": "It's nice to meet you. Is there something I can help you with or would you like to chat?"
+        }
+    },
+    {
+        "timestamp": "2026-10-14 17:06:56",
+        "model_utilized": "Llama-3.2-3B-Instruct-Q4_K_M.gguf",
+        "configuration": {
+            "temperature": 0.7
+        },
+        "telemetry": {
+            "system_ram_utilization_percent": 78.2
+        },
+        "conversation": {
+            "user_prompt": "hy",
+            "assistant_response": "It's nice to meet you. Is there something I can help you with or would you like to chat?"
+        }
+    },
+    {
+        "timestamp": "2026-10-14 17:09:46",
+        "model_utilized": "Llama-3.2-3B-Instruct-Q4_K_M.gguf",
+        "configuration": {
+            "temperature": 0.7
+        },
+        "telemetry": {
+            "system_ram_utilization_percent": 85.4
+        },
+        "conversation": {
+            "user_prompt": "still same",
+            "assistant_response": "I'm ready to assist you. What can I help you with today?"
+        }
+    },
+    {
+        "timestamp": "2026-10-14 17:14:26",
+        "model_utilized": "Llama-3.2-3B-Instruct-Q4_K_M.gguf",
+        "configuration": {
+            "temperature": 0.7
+        },
+        "telemetry": {
+            "system_ram_utilization_percent": 85.7
+        },
+        "conversation": {
+            "user_prompt": "hy",
+            "assistant_response": "It's nice to meet you. Is there something I can help you with or would you like to chat?"
+        }
+    },
+    {
+        "timestamp": "2026-10-14 17:19:26",
+        "model_utilized": "Llama-3.2-3B-Instruct-Q4_K_M.gguf",
+        "configuration": {
+            "temperature": 0.7
+        },
+        "telemetry": {
+            "system_ram_utilization_percent": 86.1
+        },
+        "conversation": {
+            "user_prompt": "hy bro",
+            "assistant_response": "Not much, bro. What's up? Need some help with something or just wanna chat?"
+        }
+    }
+]

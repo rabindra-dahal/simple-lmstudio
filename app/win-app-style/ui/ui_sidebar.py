@@ -1,10 +1,10 @@
 # ui_sidebar.py
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel, QComboBox, QSlider, QPushButton, QProgressBar, QFileDialog
 from PyQt6.QtCore import Qt, pyqtSignal
-from .theme_manager import ThemeManager
+from ui.theme_manager import ThemeManager
 
 class SidebarPanel(QWidget):
-    """Left control tray managing local model assets and parameter controls without hardcoded color restrictions."""
+    """Left control tray managing local model assets, parameter controls, and file export triggers."""
     directory_changed = pyqtSignal(str)
 
     def __init__(self, parent=None):
@@ -17,7 +17,7 @@ class SidebarPanel(QWidget):
         sidebar_layout.setContentsMargins(16, 20, 16, 20)
         sidebar_layout.setSpacing(20)
 
-        # Build clean structural layouts
+        # Storage Engine Sections
         self.dir_label = QLabel("MODEL STORAGE TARGET")
         self.change_dir_btn = QPushButton("📁 Change Directory")
         self.change_dir_btn.setCursor(Qt.CursorShape.PointingHandCursor)
@@ -73,12 +73,27 @@ class SidebarPanel(QWidget):
 
         sidebar_layout.addStretch()
 
+        # --- UTILITY CONTROLS LAYER ---
+        util_section = QWidget()
+        util_layout = QVBoxLayout(util_section)
+        util_layout.setContentsMargins(0, 0, 0, 0)
+        util_layout.setSpacing(10)
+
+        # 🚀 NEW ACTION TRIGGER: The Markdown Export Button
+        self.export_chat_btn = QPushButton("📝 Export Chat (.md)")
+        self.export_chat_btn.setCursor(Qt.CursorShape.PointingHandCursor)
+        
         self.clear_history_btn = QPushButton("🗑️ Clear Local Logs")
         self.clear_history_btn.setCursor(Qt.CursorShape.PointingHandCursor)
-        sidebar_layout.addWidget(self.clear_history_btn)
+        
+        util_layout.addWidget(self.export_chat_btn)
+        util_layout.addWidget(self.clear_history_btn)
+        sidebar_layout.addWidget(util_section)
+
+        self.apply_theme_colors("dark")
 
     def apply_theme_colors(self, mode: str):
-        """🚀 THE SIDEBAR METRICS RECOLOR MATRIX: Repaints components dynamically on command."""
+        """THE SIDEBAR METRICS RECOLOR MATRIX: Repaints labels and values instantly without text highlights."""
         c = ThemeManager.get_styles(mode)
         self.setStyleSheet(ThemeManager.get_sidebar_stylesheet(mode))
         
@@ -96,6 +111,16 @@ class SidebarPanel(QWidget):
             }}
             QPushButton:hover {{ background-color: {c['accent_cyan']}; color: {c['window_bg']}; }}
         """)
+        
+        # Style the Markdown Export Button to look sleek and distinct
+        self.export_chat_btn.setStyleSheet(f"""
+            QPushButton {{
+                background-color: {c['input_bg']}; color: {c['text_main']};
+                font-size: 12px; font-weight: 600; border: 1px solid {c['border']};
+            }}
+            QPushButton:hover {{ background-color: #0b57d0; color: white; border: 1px solid #0b57d0; }}
+        """)
+        
         self.clear_history_btn.setStyleSheet(f"""
             QPushButton {{ background-color: transparent; color: #da373c; font-size: 12px; font-weight: 600; border: 1px solid #da373c; }}
             QPushButton:hover {{ background-color: #da373c; color: #ffffff; }}

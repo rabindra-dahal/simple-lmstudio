@@ -58,7 +58,7 @@ class ChatRenderer:
             .copy-icon-btn svg {{ fill: {c['text_muted']}; transition: fill 0.2s; }}
             .copy-icon-btn:hover svg {{ fill: {c['accent_cyan']}; }}
             
-            /* NEW INDIVIDUAL CODE BLOCK WRAPPER STYLES */
+            /* INDIVIDUAL CODE BLOCK WRAPPER STYLES */
             .code-container {{
                 margin: 14px 0px;
                 border-radius: 8px;
@@ -83,7 +83,6 @@ class ChatRenderer:
                 letter-spacing: 0.5px;
             }}
             
-            /* INTERACTIVE SUBTLE HOVER EFFECT FOR THE INLINE SNIPPET SVG ICON */
             .copy-code-btn {{
                 cursor: pointer;
                 display: inline-block;
@@ -124,7 +123,6 @@ class ChatRenderer:
                 if (backend) {{ backend.executeNativeCopy(msgId); }}
             }}
             
-            /* 🚀 AUTOMATED INJECTION ENGINE WITH RE-CONFIGURED SVG ICON BUTTON ELEMENT */
             function formatCodeBlocks() {{
                 document.querySelectorAll('pre').forEach(function(pre) {{
                     if (pre.parentNode.classList.contains('code-container')) return;
@@ -135,7 +133,6 @@ class ChatRenderer:
                     var header = document.createElement('div');
                     header.className = 'code-header';
                     
-                    // 🚀 FIXED: Replaces the text link with an identical minimalist SVG dual-square vector graphic
                     header.innerHTML = '<span class="code-lang">Source Code</span>' +
                                        '<div class="copy-code-btn" onclick="copyRawCode(this)" title="Copy Code Block">' +
                                        '<svg xmlns="http://w3.org" height="16px" viewBox="0 -960 960 960" width="16px">' +
@@ -147,6 +144,12 @@ class ChatRenderer:
                     container.appendChild(pre);
                 }});
             }}
+            
+            /* 🚀 THE NATIVE EVENT FILTER LOCK: 
+               Forces browser scripts to self-execute formatting routines the exact microsecond the document finishes rendering */
+            document.addEventListener("DOMContentLoaded", function() {{
+                formatCodeBlocks();
+            }});
             
             function copyRawCode(btn) {{
                 var preBlock = btn.parentNode.nextElementSibling;
@@ -166,7 +169,6 @@ class ChatRenderer:
 
     @staticmethod
     def get_copy_svg_markup(message_id: int) -> str:
-        """Compiles a clean, pure SVG dual-square copy button matching Google AI Studio."""
         return f"""
         <div class="copy-icon-btn" onclick="triggerCopy({message_id})" title="Copy Entire Response Text">
             <svg xmlns="http://w3.org" height="18px" viewBox="0 -960 960 960" width="18px">
@@ -207,5 +209,5 @@ class ChatRenderer:
         html = html.replace('<p>', f'<p style="margin: 0px 0px 8px 0px; color: {c["text_main"]}; line-height: 1.5;">')
         html = html.replace('<ul>', f'<ul style="margin-top: 4px; margin-bottom: 8px; padding-left: 20px; color: {c["text_main"]};">')
         html = html.replace('<li>', f'<li style="margin-bottom: 4px;">')
-        html = html.replace('<code>', f'<code style="background-color: {c["input_bg"]}; color: #ff79c6; font-family: Consolas, monospace; padding: 2px 4px; border-radius: 4px; font-size: 13px;">')
+        html = html.replace('', f'<code style="background-color: {c["input_bg"]}; color: #ff79c6; font-family: Consolas, monospace; padding: 2px 4px; border-radius: 4px; font-size: 13px;">')
         return html

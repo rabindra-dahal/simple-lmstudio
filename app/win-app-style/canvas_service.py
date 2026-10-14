@@ -9,37 +9,41 @@ class CanvasService:
     
     @staticmethod
     def redraw_entire_chat_canvas(ctrl, streaming_text: str = None, is_final_pass: bool = False):
-        """🚀 ZERO-FLICKER CORE: Dynamically updates textual nodes and triggers code block styling script updates."""
+        """🚀 THE ZERO-FLICKER SCROLL CORE: Injects fragments and forces bottom auto-scroll pins [INDEX]."""
         js_scroll_bottom = "window.scrollTo(0, document.body.scrollHeight);"
 
+        # 1. Final Generation Markdown Pass (Triggers when model hits stop token) [INDEX]
         if is_final_pass:
             compiled_md_content = ChatRenderer.compile_markdown_payload(streaming_text, ctrl.current_theme)
             escaped_html = compiled_md_content.replace("\\", "\\\\").replace("'", "\\'").replace("\n", "\\n")
             
-            # Injection Pass A: Redraw inner content text node layer
+            # Step A: Update the response content inside the active card
             js_update_content = f"document.getElementById('msg_block_{ctrl.active_message_id}').innerHTML = '{escaped_html}';"
             ctrl.win.chat_panel.chat_history.page().runJavaScript(js_update_content)
             
-            # Injection Pass B: Restore vector copy icon button on card header tray
+            # Step B: Restore header dual-square copy icon button
             svg_markup = ChatRenderer.get_copy_svg_markup(ctrl.active_message_id)
-            escaped_svg = svg_markup.replace("'", "\\'")
-            js_restore_btn = f"document.querySelector('#ai_row_{ctrl.active_message_id} .copy-btn-container').innerHTML = `{escaped_svg}`;"
+            js_restore_btn = f"document.querySelector('#ai_row_{ctrl.active_message_id} .copy-btn-container').innerHTML = `{svg_markup}`;"
             ctrl.win.chat_panel.chat_history.page().runJavaScript(js_restore_btn)
             
-            # 🚀 Injection Pass C: Scan and format raw code blocks inside the active container card
+            # Step C: Scan and format raw code blocks inside the active container card
             ctrl.win.chat_panel.chat_history.page().runJavaScript("formatCodeBlocks();")
             
+            # Anchor window focus strictly at the bottom
             ctrl.win.chat_panel.chat_history.page().runJavaScript(js_scroll_bottom)
             return
 
+        # 2. Incremental Token Streaming Pass (Triggers word-by-word) [INDEX]
         if streaming_text is not None and ctrl.active_message_running:
             safe_js_text = json.dumps(streaming_text.replace('\n', '<br>') + " ▌")
             js_patch_cmd = f"document.getElementById('msg_block_{ctrl.active_message_id}').innerHTML = {safe_js_text};"
             ctrl.win.chat_panel.chat_history.page().runJavaScript(js_patch_cmd)
+            
+            # Force auto-scroll pin on active token step so you can watch text print out!
             ctrl.win.chat_panel.chat_history.page().runJavaScript(js_scroll_bottom)
             return
 
-        # Fallback loop layout builder
+        # 3. Fallback Full Redraw Pass (Fires when user sends a prompt query)
         canvas_html = ChatRenderer.get_global_css_header(ctrl.current_theme)
         for idx, element in enumerate(ctrl.chat_history_elements):
             if element["role"] == "user":
@@ -53,12 +57,12 @@ class CanvasService:
             
         ctrl.win.chat_panel.chat_history.setHtml(canvas_html)
         
-        # 🚀 Trigger structural script operations on full webpage re-renders
-        QTimer.singleShot(120, lambda: ctrl.win.chat_panel.chat_history.page().runJavaScript("formatCodeBlocks();"))
-        QTimer.singleShot(150, lambda: ctrl.win.chat_panel.chat_history.page().runJavaScript(js_scroll_bottom))
+        # Wait for Chromium to load the document tags, then anchor focus at the base [INDEX]
+        QTimer.singleShot(50, lambda: ctrl.win.chat_panel.chat_history.page().runJavaScript(js_scroll_bottom))
 
     @staticmethod
     def apply_global_theme_repaint(ctrl):
+        """Paints 100% of visible system assets instantly with zero unstyled color bleed-through."""
         c = ThemeManager.get_styles(ctrl.current_theme)
         text_color = c["text_main"]
         bg_color = c["window_bg"]

@@ -5,23 +5,23 @@ from ui.theme_manager import ThemeManager
 from ui.chat_renderer import ChatRenderer
 
 class CanvasService:
-    """Authoritative repaint engine driving smooth, flicker-free Chromium WebEngine views."""
+    """Authoritative repaint engine driving smooth, memory-optimized Chromium WebEngine views."""
     
     @staticmethod
     def redraw_entire_chat_canvas(ctrl, streaming_text: str = None, is_final_pass: bool = False):
-        """🚀 THE TOTAL FLICKER AND ENCODING RESOLUTION: Injects serialized text safely to prevent raw HTML leakage."""
+        """🚀 THE TOTAL FLICKER, SCROLL, AND MEMORY SOLUTION: Safely handles node updates and drops layout bloat."""
         js_scroll_bottom = "window.scrollTo(0, document.body.scrollHeight);"
 
-        # 1. Final Generation Markdown Compilation Pass [INDEX]
+        # 1. Final Generation Markdown Compilation Pass (Triggers on Generation Stop)
         if is_final_pass:
             compiled_md_content = ChatRenderer.compile_markdown_payload(streaming_text, ctrl.current_theme)
             safe_final_html = json.dumps(compiled_md_content)
             
-            # Step A: Update the response text node layer with parsed HTML elements [INDEX]
+            # Step A: Update the inner text node layer with parsed rich HTML elements
             js_update_content = f"document.getElementById('msg_block_{ctrl.active_message_id}').innerHTML = {safe_final_html};"
             ctrl.win.chat_panel.chat_history.page().runJavaScript(js_update_content)
             
-            # Step B: Restore header dual-square copy icon button using safe backticks [INDEX]
+            # Step B: Restore header dual-square copy icon button using safe backticks
             svg_markup = ChatRenderer.get_copy_svg_markup(ctrl.active_message_id)
             js_restore_btn = f"document.querySelector('#ai_row_{ctrl.active_message_id} .copy-btn-container').innerHTML = `{svg_markup}`;"
             ctrl.win.chat_panel.chat_history.page().runJavaScript(js_restore_btn)
@@ -29,11 +29,16 @@ class CanvasService:
             # Step C: Scan and format any genuine code snippet blocks inside the response card
             ctrl.win.chat_panel.chat_history.page().runJavaScript("formatCodeBlocks();")
             
+            # 🚀 Step D: CHROMIUM GARBAGE COLLECTION & MEMORY TRIMMING
+            # Forces the V8 Javascript engine to immediately flush its text styling cache,
+            # dropping backbuffer layout bloat right after processing heavy code cards!
+            ctrl.win.chat_panel.chat_history.page().runJavaScript("if (window.gc) { window.gc(); }")
+            
             # Anchor window focus strictly at the bottom
             ctrl.win.chat_panel.chat_history.page().runJavaScript(js_scroll_bottom)
             return
 
-        # 2. Fast tracking incremental injections during active streaming passes [INDEX]
+        # 2. Fast tracking incremental injections during active streaming passes (Word-by-word)
         if streaming_text is not None and ctrl.active_message_running:
             safe_js_text = json.dumps(streaming_text.replace('\n', '<br>') + " ▌")
             js_patch_cmd = f"document.getElementById('msg_block_{ctrl.active_message_id}').innerHTML = {safe_js_text};"
@@ -41,7 +46,7 @@ class CanvasService:
             ctrl.win.chat_panel.chat_history.page().runJavaScript(js_scroll_bottom)
             return
 
-        # 3. Fallback Full Redraw Pass (Fires when user sends a prompt query)
+        # 3. Fallback Full Redraw Pass (Fires when user sends a fresh prompt query)
         canvas_html = ChatRenderer.get_global_css_header(ctrl.current_theme)
         for idx, element in enumerate(ctrl.chat_history_elements):
             if element["role"] == "user":
@@ -55,7 +60,7 @@ class CanvasService:
             
         ctrl.win.chat_panel.chat_history.setHtml(canvas_html)
         
-        # Wait for Chromium to load document tags, then anchor focus at the base [INDEX]
+        # Wait for Chromium to build document tags, then anchor focus at the base
         QTimer.singleShot(50, lambda: ctrl.win.chat_panel.chat_history.page().runJavaScript(js_scroll_bottom))
 
     @staticmethod

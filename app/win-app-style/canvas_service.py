@@ -9,30 +9,29 @@ class CanvasService:
     
     @staticmethod
     def redraw_entire_chat_canvas(ctrl, streaming_text: str = None, is_final_pass: bool = False):
-        """🚀 THE TOTAL SOLUTION: Injects fragments, converts markdown, and restores vector icons cleanly."""
+        """🚀 ZERO-FLICKER CORE: Dynamically updates textual nodes and triggers code block styling script updates."""
         js_scroll_bottom = "window.scrollTo(0, document.body.scrollHeight);"
 
-        # 1. 🚀 THE FINAL COMPILATION PASS FIX:
         if is_final_pass:
             compiled_md_content = ChatRenderer.compile_markdown_payload(streaming_text, ctrl.current_theme)
             escaped_html = compiled_md_content.replace("\\", "\\\\").replace("'", "\\'").replace("\n", "\\n")
             
-            # Step A: Update the response content inside the active card
+            # Injection Pass A: Redraw inner content text node layer
             js_update_content = f"document.getElementById('msg_block_{ctrl.active_message_id}').innerHTML = '{escaped_html}';"
             ctrl.win.chat_panel.chat_history.page().runJavaScript(js_update_content)
             
-            # Step B: 🚀 THE NATIVE BACKTICK RECONSTRUCTION:
-            # Using clean JavaScript backticks (`) bypasses all nested quote collisions,
-            # forcing the dual-square icon to render instantly on your laptop!
+            # Injection Pass B: Restore vector copy icon button on card header tray
             svg_markup = ChatRenderer.get_copy_svg_markup(ctrl.active_message_id)
-            js_restore_btn = f"document.querySelector('#ai_row_{ctrl.active_message_id} .copy-btn-container').innerHTML = `{svg_markup}`;"
+            escaped_svg = svg_markup.replace("'", "\\'")
+            js_restore_btn = f"document.querySelector('#ai_row_{ctrl.active_message_id} .copy-btn-container').innerHTML = `{escaped_svg}`;"
             ctrl.win.chat_panel.chat_history.page().runJavaScript(js_restore_btn)
             
-            # Anchor window focus strictly at the bottom
+            # 🚀 Injection Pass C: Scan and format raw code blocks inside the active container card
+            ctrl.win.chat_panel.chat_history.page().runJavaScript("formatCodeBlocks();")
+            
             ctrl.win.chat_panel.chat_history.page().runJavaScript(js_scroll_bottom)
             return
 
-        # 2. Fast tracking incremental injections during active streaming passes
         if streaming_text is not None and ctrl.active_message_running:
             safe_js_text = json.dumps(streaming_text.replace('\n', '<br>') + " ▌")
             js_patch_cmd = f"document.getElementById('msg_block_{ctrl.active_message_id}').innerHTML = {safe_js_text};"
@@ -40,7 +39,7 @@ class CanvasService:
             ctrl.win.chat_panel.chat_history.page().runJavaScript(js_scroll_bottom)
             return
 
-        # 3. Fallback full page redraw loop for new entries
+        # Fallback loop layout builder
         canvas_html = ChatRenderer.get_global_css_header(ctrl.current_theme)
         for idx, element in enumerate(ctrl.chat_history_elements):
             if element["role"] == "user":
@@ -53,7 +52,10 @@ class CanvasService:
             ctrl.active_message_running = True
             
         ctrl.win.chat_panel.chat_history.setHtml(canvas_html)
-        QTimer.singleShot(80, lambda: ctrl.win.chat_panel.chat_history.page().runJavaScript(js_scroll_bottom))
+        
+        # 🚀 Trigger structural script operations on full webpage re-renders
+        QTimer.singleShot(120, lambda: ctrl.win.chat_panel.chat_history.page().runJavaScript("formatCodeBlocks();"))
+        QTimer.singleShot(150, lambda: ctrl.win.chat_panel.chat_history.page().runJavaScript(js_scroll_bottom))
 
     @staticmethod
     def apply_global_theme_repaint(ctrl):

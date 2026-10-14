@@ -9,37 +9,35 @@ class CanvasService:
     
     @staticmethod
     def redraw_entire_chat_canvas(ctrl, streaming_text: str = None, is_final_pass: bool = False):
-        """🚀 THE ZERO-FLICKER SCROLL CORE: Injects fragments and forces bottom auto-scroll pins [INDEX]."""
+        """🚀 THE TOTAL FLICKER AND ENCODING RESOLUTION: Injects serialized text safely to prevent raw HTML leakage."""
         js_scroll_bottom = "window.scrollTo(0, document.body.scrollHeight);"
 
-        # 1. Final Generation Markdown Pass (Triggers when model hits stop token) [INDEX]
+        # 1. Final Generation Markdown Compilation Pass [INDEX]
         if is_final_pass:
             compiled_md_content = ChatRenderer.compile_markdown_payload(streaming_text, ctrl.current_theme)
-            escaped_html = compiled_md_content.replace("\\", "\\\\").replace("'", "\\'").replace("\n", "\\n")
+            safe_final_html = json.dumps(compiled_md_content)
             
-            # Step A: Update the response content inside the active card
-            js_update_content = f"document.getElementById('msg_block_{ctrl.active_message_id}').innerHTML = '{escaped_html}';"
+            # Step A: Update the response text node layer with parsed HTML elements [INDEX]
+            js_update_content = f"document.getElementById('msg_block_{ctrl.active_message_id}').innerHTML = {safe_final_html};"
             ctrl.win.chat_panel.chat_history.page().runJavaScript(js_update_content)
             
-            # Step B: Restore header dual-square copy icon button
+            # Step B: Restore header dual-square copy icon button using safe backticks [INDEX]
             svg_markup = ChatRenderer.get_copy_svg_markup(ctrl.active_message_id)
             js_restore_btn = f"document.querySelector('#ai_row_{ctrl.active_message_id} .copy-btn-container').innerHTML = `{svg_markup}`;"
             ctrl.win.chat_panel.chat_history.page().runJavaScript(js_restore_btn)
             
-            # Step C: Scan and format raw code blocks inside the active container card
+            # Step C: Scan and format any genuine code snippet blocks inside the response card
             ctrl.win.chat_panel.chat_history.page().runJavaScript("formatCodeBlocks();")
             
             # Anchor window focus strictly at the bottom
             ctrl.win.chat_panel.chat_history.page().runJavaScript(js_scroll_bottom)
             return
 
-        # 2. Incremental Token Streaming Pass (Triggers word-by-word) [INDEX]
+        # 2. Fast tracking incremental injections during active streaming passes [INDEX]
         if streaming_text is not None and ctrl.active_message_running:
             safe_js_text = json.dumps(streaming_text.replace('\n', '<br>') + " ▌")
             js_patch_cmd = f"document.getElementById('msg_block_{ctrl.active_message_id}').innerHTML = {safe_js_text};"
             ctrl.win.chat_panel.chat_history.page().runJavaScript(js_patch_cmd)
-            
-            # Force auto-scroll pin on active token step so you can watch text print out!
             ctrl.win.chat_panel.chat_history.page().runJavaScript(js_scroll_bottom)
             return
 
@@ -57,7 +55,7 @@ class CanvasService:
             
         ctrl.win.chat_panel.chat_history.setHtml(canvas_html)
         
-        # Wait for Chromium to load the document tags, then anchor focus at the base [INDEX]
+        # Wait for Chromium to load document tags, then anchor focus at the base [INDEX]
         QTimer.singleShot(50, lambda: ctrl.win.chat_panel.chat_history.page().runJavaScript(js_scroll_bottom))
 
     @staticmethod

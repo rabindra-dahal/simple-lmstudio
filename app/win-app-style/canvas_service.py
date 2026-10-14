@@ -1,21 +1,48 @@
 # canvas_service.py
-from PyQt6.QtGui import QPalette, QColor
+import json
 from ui.theme_manager import ThemeManager
 from ui.chat_renderer import ChatRenderer
+from PyQt6.QtCore import QTimer
 
 class CanvasService:
-    """Authoritative repaint engine that injects colors into 100% of visible system assets instantly."""
+    """Authoritative repaint engine driving smooth, flicker-free Chromium WebEngine views."""
     
     @staticmethod
-    def redraw_entire_chat_canvas(ctrl, streaming_text: str = None):
-        ctrl.win.chat_panel.chat_history.document().clear()
-        c = ThemeManager.get_styles(ctrl.current_theme)
+    def redraw_entire_chat_canvas(ctrl, streaming_text: str = None, is_final_pass: bool = False):
+        """🚀 THE ZERO-FLICKER SCROLL CORE: Injects fragments and forces bottom auto-scroll pins [INDEX]."""
         
-        palette = ctrl.win.chat_panel.chat_history.palette()
-        palette.setColor(QPalette.ColorRole.Base, QColor(c['window_bg']))
-        palette.setColor(QPalette.ColorRole.Text, QColor(c['text_main']))
-        ctrl.win.chat_panel.chat_history.setPalette(palette)
-        
+        # JAVASCRIPT SCROLL PIN ANCHOR: Automatically sticks the viewport window right at the bottom edge!
+        js_scroll_bottom = "window.scrollTo(0, document.body.scrollHeight);"
+
+        # 1. Final Generation Markdown Compilation pass
+        if is_final_pass:
+            compiled_md_content = ChatRenderer.compile_markdown_payload(streaming_text, ctrl.current_theme)
+            escaped_html = compiled_md_content.replace("\\", "\\\\").replace("'", "\\'").replace("\n", "\\n")
+            
+            # Update target AI card content
+            js_update_content = f"document.getElementById('msg_block_{ctrl.active_message_id}').innerHTML = '{escaped_html}';"
+            ctrl.win.chat_panel.chat_history.page().runJavaScript(js_update_content)
+            
+            # Restore clipboard button layout frame
+            action_btn_html = f'<span class=\"copy-btn\" onclick=\"triggerCopy({ctrl.active_message_id})\">📋 COPY TEXT</span>'
+            js_restore_btn = f"document.querySelector('#ai_row_{ctrl.active_message_id} .copy-btn-container').innerHTML = '{action_btn_html}';"
+            ctrl.win.chat_panel.chat_history.page().runJavaScript(js_restore_btn)
+            
+            # 🚀 Force auto-scroll pin on finalize step
+            ctrl.win.chat_panel.chat_history.page().runJavaScript(js_scroll_bottom)
+            return
+
+        # 2. Incremental streaming tokens step
+        if streaming_text is not None and ctrl.active_message_running:
+            safe_js_text = json.dumps(streaming_text.replace('\n', '<br>') + " ▌")
+            js_patch_cmd = f"document.getElementById('msg_block_{ctrl.active_message_id}').innerHTML = {safe_js_text};"
+            ctrl.win.chat_panel.chat_history.page().runJavaScript(js_patch_cmd)
+            
+            # 🚀 Force auto-scroll pin on active token step so you can watch text print out!
+            ctrl.win.chat_panel.chat_history.page().runJavaScript(js_scroll_bottom)
+            return
+
+        # 3. Full layout build pass (Fires when user sends a prompt query)
         canvas_html = ChatRenderer.get_global_css_header(ctrl.current_theme)
         for idx, element in enumerate(ctrl.chat_history_elements):
             if element["role"] == "user":
@@ -25,51 +52,46 @@ class CanvasService:
                 
         if streaming_text is not None:
             canvas_html += ChatRenderer.get_assistant_bubble_html(streaming_text, ctrl.active_message_id, True, ctrl.current_theme)
+            ctrl.active_message_running = True
             
+        # Write HTML payload to browser window
         ctrl.win.chat_panel.chat_history.setHtml(canvas_html)
-        ctrl.win.chat_panel.chat_history.ensureCursorVisible()
+        
+        # 🚀 THE CRITICAL FIX: 
+        # Wait a tiny fraction of a second for Chromium to load the document tags,
+        # then forcefully anchor the viewport right at the base of the page canvas.
+        QTimer.singleShot(80, lambda: ctrl.win.chat_panel.chat_history.page().runJavaScript(js_scroll_bottom))
 
     @staticmethod
     def apply_global_theme_repaint(ctrl):
-        """🚀 THE CONVERSION CORE: Overwrites every widget layer to match the active theme hex parameters perfectly."""
         c = ThemeManager.get_styles(ctrl.current_theme)
         text_color = c["text_main"]
         bg_color = c["window_bg"]
         border_style = f"1px solid {c['border']}"
         
-        # 1. Paint core window layouts
         ctrl.win.setStyleSheet(f"background-color: {bg_color};")
         ctrl.win.central_canvas.setStyleSheet(f"background-color: {bg_color}; border: none;")
         ctrl.win.chat_panel.setStyleSheet(f"background-color: {bg_color}; border: none;")
         
-        # 2. Invoke the deep recolor matrix routines inside the sidebar panels
         ctrl.win.sidebar.apply_theme_colors(ctrl.current_theme)
         
-        # 3. Paint top navigation dashboard headers
         ctrl.win.chat_panel.header_widget.setStyleSheet(f"background-color: {c['sidebar_bg']}; border-bottom: {border_style};")
-        ctrl.win.chat_panel.model_tag.setStyleSheet(f"color: {text_color}; font-size: 14px; font-weight: 600; background: transparent;")
-        ctrl.win.chat_panel.status_subtext.setStyleSheet(f"color: {c['accent_cyan']}; font-size: 11px; font-weight: 500; background: transparent;")
+        ctrl.win.chat_panel.model_tag.setStyleSheet(f"color: {text_color}; font-size: 14px; font-weight: 600; background: transparent; border: none;")
+        ctrl.win.chat_panel.status_subtext.setStyleSheet(f"color: {c['accent_cyan']}; font-size: 11px; font-weight: 500; background: transparent; border: none;")
         
-        # 4. Paint chat canvas view sheets
-        ctrl.win.chat_panel.chat_history.setStyleSheet(f"QTextBrowser {{ background-color: {bg_color}; border: none; padding: 24px; }}")
-        
-        # 5. 🚀 FIXED: Paint bottom input line capsule box tray and solve invisible typing text layers
         ctrl.win.chat_panel.footer_widget.setStyleSheet(f"background-color: {bg_color}; border: none;")
         ctrl.win.chat_panel.input_container.setStyleSheet(f"background-color: {c['sidebar_bg']}; border-radius: 24px; border: {border_style};")
         ctrl.win.chat_panel.input_field.setStyleSheet(f"QLineEdit {{ background-color: transparent; color: {text_color}; font-size: 14px; border: none; padding: 12px 0px; }}")
         
-        # 6. Paint footer interaction buttons
         ctrl.win.chat_panel.send_btn.setStyleSheet(f"""
-            QPushButton {{ background-color: #0b57d0; color: white; font-weight: 600; font-size: 13px; border-radius: 18px; padding: 8px 20px; border: none; }}
+            QPushButton {{ background-color: #0b57d0; color: white; font-weight: 600; font-size: 13px; border-radius: 18px; padding: 8px 22px; border: none; }}
             QPushButton:hover {{ background-color: #004ecc; }}
             QPushButton:disabled {{ background-color: {c['sidebar_bg']}; color: {c['text_muted']}; border: {border_style}; }}
         """)
         
-        # 7. Paint floating overlay stop badges
         ctrl.win.chat_panel.stop_overlay_btn.setStyleSheet(f"""
-            QPushButton {{ background-color: {c['sidebar_bg']}; color: {text_color}; font-weight: 600; font-size: 13px; border-radius: 16px; padding: 8px 22px; border: {border_style}; margin-bottom: 20px; }}
-            QPushButton:hover {{ background-color: {c['input_bg']}; }}
+            QPushButton {{ background-color: #da373c; color: white; font-weight: 600; font-size: 13px; border-radius: 18px; padding: 8px 22px; border: 1px solid #ff4d4d; }}
+            QPushButton:hover {{ background-color: #a92b2f; }}
         """)
         
-        # Force fresh canvas redraw loop
         CanvasService.redraw_entire_chat_canvas(ctrl)

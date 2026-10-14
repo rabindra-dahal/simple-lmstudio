@@ -3,7 +3,7 @@ import markdown
 from ui.theme_manager import ThemeManager
 
 class ChatRenderer:
-    """Compiles modern, responsive chat components utilizing native CSS Flexbox layers and clean vector icon buttons."""
+    """Compiles modern, responsive chat components utilizing native CSS Flexbox layers, clean vector icon buttons, and JS bridges."""
     
     @classmethod
     def get_global_css_header(cls, theme_mode: str = "dark") -> str:
@@ -54,25 +54,63 @@ class ChatRenderer:
                 border-radius: 4px;
                 transition: background-color 0.2s;
             }}
-            .copy-icon-btn:hover {{
+            .copy-icon-btn:hover {{ background-color: {c['input_bg']}; }}
+            .copy-icon-btn svg {{ fill: {c['text_muted']}; transition: fill 0.2s; }}
+            .copy-icon-btn:hover svg {{ fill: {c['accent_cyan']}; }}
+            
+            /* NEW INDIVIDUAL CODE BLOCK WRAPPER STYLES */
+            .code-container {{
+                margin: 14px 0px;
+                border-radius: 8px;
+                border: 1px solid {c['border']};
+                overflow: hidden;
+                width: 100%;
+            }}
+            .code-header {{
                 background-color: {c['input_bg']};
+                padding: 6px 16px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                border-bottom: 1px solid {c['border']};
+                user-select: none;
             }}
-            .copy-icon-btn svg {{
-                fill: {c['text_muted']};
-                transition: fill 0.2s;
+            .code-lang {{
+                color: {c['text_muted']};
+                font-size: 11px;
+                font-weight: 700;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
             }}
-            .copy-icon-btn:hover svg {{
-                fill: {c['accent_cyan']};
+            
+            /* INTERACTIVE SUBTLE HOVER EFFECT FOR THE INLINE SNIPPET SVG ICON */
+            .copy-code-btn {{
+                cursor: pointer;
+                display: inline-block;
+                padding: 4px;
+                border-radius: 4px;
+                transition: background-color 0.2s;
             }}
+            .copy-code-btn:hover {{ background-color: {c['border']}; }}
+            .copy-code-btn svg {{ fill: {c['text_muted']}; transition: fill 0.2s; }}
+            .copy-code-btn:hover svg {{ fill: {c['accent_cyan']}; }}
             
             .content {{ font-size: 14px; line-height: 1.5; color: {c['text_main']}; }}
             h1, h2, h3 {{ color: {c['accent_cyan']}; margin-top: 12px; margin-bottom: 6px; font-weight: 600; }}
             h1 {{ font-size: 18px; }} h2 {{ font-size: 16px; }}
             p {{ margin: 0px 0px 8px 0px; }}
-            ul, ol {{ margin-top: 4px; margin-bottom: 8px; padding-left: 20px; }}
+            ul, ol {{ margin-top: 4px; margin-bottom: 8px; padding-left: 20px; color: {c['text_main']}; }}
             li {{ margin-bottom: 4px; }}
             code {{ background-color: {c['input_bg']}; color: #ff79c6; font-family: 'Consolas', monospace; padding: 2px 4px; border-radius: 4px; font-size: 13px; }}
-            pre {{ background-color: {c['input_bg']}; padding: 12px; border-radius: 6px; border: 1px solid {c['border']}; font-family: 'Consolas', monospace; overflow-x: auto; margin: 10px 0; }}
+            
+            pre {{ 
+                background-color: {c['input_bg']}; 
+                padding: 14px; 
+                margin: 0px !important; 
+                border: none !important; 
+                font-family: 'Consolas', monospace; 
+                overflow-x: auto; 
+            }}
         </style>
         
         <script src="qrc:///qtwebchannel/qwebchannel.js"></script>
@@ -81,8 +119,39 @@ class ChatRenderer:
             new QWebChannel(qt.webChannelTransport, function (channel) {{
                 backend = channel.objects.pyBackend;
             }});
+            
             function triggerCopy(msgId) {{
                 if (backend) {{ backend.executeNativeCopy(msgId); }}
+            }}
+            
+            /* 🚀 AUTOMATED INJECTION ENGINE WITH RE-CONFIGURED SVG ICON BUTTON ELEMENT */
+            function formatCodeBlocks() {{
+                document.querySelectorAll('pre').forEach(function(pre) {{
+                    if (pre.parentNode.classList.contains('code-container')) return;
+                    
+                    var container = document.createElement('div');
+                    container.className = 'code-container';
+                    
+                    var header = document.createElement('div');
+                    header.className = 'code-header';
+                    
+                    // 🚀 FIXED: Replaces the text link with an identical minimalist SVG dual-square vector graphic
+                    header.innerHTML = '<span class="code-lang">Source Code</span>' +
+                                       '<div class="copy-code-btn" onclick="copyRawCode(this)" title="Copy Code Block">' +
+                                       '<svg xmlns="http://w3.org" height="16px" viewBox="0 -960 960 960" width="16px">' +
+                                       '<path d="M360-240q-33 0-56.5-23.5T280-320v-480q0-33 23.5-56.5T360-880h360q33 0 56.5 23.5T800-800v480q0 33-23.5 56.5T720-240H360Zm0-80h360v-480H360v480ZM200-80q-33 0-56.5-23.5T120-160v-560h80v560h440v80H200Zm160-240v-480 480Z"/>' +
+                                       '</svg></div>';
+                    
+                    pre.parentNode.insertBefore(container, pre);
+                    container.appendChild(header);
+                    container.appendChild(pre);
+                }});
+            }}
+            
+            function copyRawCode(btn) {{
+                var preBlock = btn.parentNode.nextElementSibling;
+                var rawCodeText = preBlock.innerText || preBlock.textContent;
+                if (backend) {{ backend.executeDirectTextCopy(rawCodeText); }}
             }}
         </script>
         """
@@ -99,7 +168,7 @@ class ChatRenderer:
     def get_copy_svg_markup(message_id: int) -> str:
         """Compiles a clean, pure SVG dual-square copy button matching Google AI Studio."""
         return f"""
-        <div class="copy-icon-btn" onclick="triggerCopy({message_id})" title="Copy to Clipboard">
+        <div class="copy-icon-btn" onclick="triggerCopy({message_id})" title="Copy Entire Response Text">
             <svg xmlns="http://w3.org" height="18px" viewBox="0 -960 960 960" width="18px">
                 <path d="M360-240q-33 0-56.5-23.5T280-320v-480q0-33 23.5-56.5T360-880h360q33 0 56.5 23.5T800-800v480q0 33-23.5 56.5T720-240H360Zm0-80h360v-480H360v480ZM200-80q-33 0-56.5-23.5T120-160v-560h80v560h440v80H200Zm160-240v-480 480Z"/>
             </svg>
@@ -114,17 +183,13 @@ class ChatRenderer:
         else:
             formatted_text = markdown.markdown(response_text, extensions=['fenced_code', 'tables'])
 
-        # 🚀 FIXED THE STRUCTURE UNIFORMITY:
-        # We always supply the exact same container markup architecture so JavaScript doesn't get lost
         action_button = " " if is_streaming else ChatRenderer.get_copy_svg_markup(message_id)
-        
         return f"""
         <div class="chat-row ai-row" id="ai_row_{message_id}">
             <div class="ai-card">
                 <table class="header-table">
                     <tr>
                         <td align="left" class="label-ai">✨ LOCAL ASSISTANT</td>
-                        <!-- 🚀 ALWAYS ENSURE THE HOOK CLASS IS INSTANTIATED PROPERLY -->
                         <td align="right" class="copy-btn-container">{action_button}</td>
                     </tr>
                 </table>
@@ -143,5 +208,4 @@ class ChatRenderer:
         html = html.replace('<ul>', f'<ul style="margin-top: 4px; margin-bottom: 8px; padding-left: 20px; color: {c["text_main"]};">')
         html = html.replace('<li>', f'<li style="margin-bottom: 4px;">')
         html = html.replace('<code>', f'<code style="background-color: {c["input_bg"]}; color: #ff79c6; font-family: Consolas, monospace; padding: 2px 4px; border-radius: 4px; font-size: 13px;">')
-        html = html.replace('<pre>', f'<pre style="background-color: {c["input_bg"]}; padding: 12px; border-radius: 6px; border: 1px solid {c["border"]}; font-family: Consolas, monospace; overflow-x: auto; margin: 10px 0;">')
         return html

@@ -3,52 +3,43 @@ import os
 import sys
 
 # 🚀 SYSTEM DRIVER LAYER INTERLOCK
-# Completely blocks the Intel graphics driver from allocating a heavy Vulkan RAM heap.
 os.environ["VK_ICD_FILENAMES"] = ""      
 os.environ["DISABLE_VULKAN"] = "1"        
 os.environ["GGML_VULKAN_DISABLE"] = "1"   
 
 from PyQt6.QtCore import QObject, QTimer, QUrl, pyqtSlot
 from PyQt6.QtGui import QColor
+from PyQt6.QtWidgets import QApplication  # 🚀 IMPORT APPLICATION LEVEL REGISTERS
 from PyQt6.QtWebChannel import QWebChannel
-
-# Corrected namespace links targeting your specific layout mapping matrix
 from ui.chat_renderer import ChatRenderer
 from utils.model_service import ModelService
 from utils.clipboard_manager import ClipboardManager
 
 class AppController(QObject):
-    """
-    Refactored coordinator focused strictly on responsive Chromium WebEngine text loops
-    and zero-flicker target node update operations.
-    """
+    """Refactored coordinator focused strictly on responsive Chromium WebEngine text loops."""
     def __init__(self, main_window):
         super().__init__()
         self.win = main_window   
         
-        # Instantiate standalone modular sub-services matching our blueprint architecture
         self.model_service = ModelService()
         self.clipboard_manager = ClipboardManager()
-        
         self.win.models_dir = self.model_service.load_initial_directory()
         
-        # Background worker status monitors
         self.worker = None
         self.current_prompt = ""           
         self.current_assistant_html = ""
         self.current_theme = "dark"  
         
-        # Canvas history array matrices
-        self.chat_history_elements = []  # List of dicts: {"role": "user"/"assistant", "text": "..."}
+        self.chat_history_elements = []  
         self.active_message_id = 0
-        self.active_message_running = False  # Track live streaming states to block paint flashes
+        self.active_message_running = False  
         
-        # 🚀 SETUP THE JAVASCRIPT-TO-PYTHON CHANNEL BRIDGE REGISTER MATRIX
+        # Setup Javascript-to-Python direct bridge layer interlock channels
         self.web_channel = QWebChannel()
         self.web_channel.registerObject("pyBackend", self)
         self.win.chat_panel.chat_history.page().setWebChannel(self.web_channel)
         
-        # Connect visual layout management slots
+        # Connect visual layout slots
         self.win.chat_panel.stop_overlay_btn.clicked.connect(self.stop_generation)
         self.win.sidebar.toggle_theme_btn.clicked.connect(self.toggle_application_theme)
         
@@ -57,12 +48,24 @@ class AppController(QObject):
 
     @pyqtSlot(int)
     def executeNativeCopy(self, msg_id: int):
-        """🚀 THE JAVASCRIPT DIRECT LINK ANCHOR BRIDGE: Receives data strings silently without popups [INDEX]."""
+        """Processes full dialogue text card copies into Windows OS system registers smoothly [INDEX]."""
         mock_url_path = f"copy://{msg_id}"
         if self.clipboard_manager.copy_to_clipboard(mock_url_path):
             old_title = self.win.chat_panel.model_tag.text()
-            self.win.chat_panel.model_tag.setText("📋 Response Text Successfully Copied to Clipboard!")
+            self.win.chat_panel.model_tag.setText("📋 Full Response Copied to Clipboard!")
             QTimer.singleShot(2000, lambda: self.win.chat_panel.model_tag.setText(old_title))
+
+    @pyqtSlot(str)
+    def executeDirectTextCopy(self, text_content: str):
+        """🚀 THE CODE PILL DIRECT OVERRIDE: Captures isolated raw code content instantly without text headers!"""
+        clipboard = QApplication.clipboard()
+        clipboard.clear(mode=clipboard.Mode.Clipboard)
+        clipboard.setText(text_content.strip(), mode=clipboard.Mode.Clipboard)
+        
+        # Flash a unique confirmation layout message on the top header title tag
+        old_title = self.win.chat_panel.model_tag.text()
+        self.win.chat_panel.model_tag.setText("💻 Source Code Block Copied Successfully!")
+        QTimer.singleShot(2000, lambda: self.win.chat_panel.model_tag.setText(old_title))
 
     def scan_models_directory(self):
         active_path = self.model_service.scan_directory(self.win.sidebar.model_selector, self.win.models_dir)
@@ -100,7 +103,7 @@ class AppController(QObject):
         self.toggle_ui_state(False)
         
         self.active_message_id = self.clipboard_manager.get_next_index_id()
-        self.active_message_running = False  # Reset flag for the fresh incoming message block
+        self.active_message_running = False 
         
         self.win.canvas_service.redraw_entire_chat_canvas(self, streaming_text="")
         
@@ -122,11 +125,10 @@ class AppController(QObject):
             self.finalize_response_element()
 
     def finalize_response_element(self):
-        self.active_message_running = False  # Turn off streaming append checks to execute markdown builds
+        self.active_message_running = False  
         self.chat_history_elements.append({"role": "assistant", "text": self.current_assistant_html})
         self.clipboard_manager.store_response(self.current_assistant_html)
         
-        # Call the targeted pass directly to bypass full-page redraw blips [INDEX]
         self.win.canvas_service.redraw_entire_chat_canvas(self, streaming_text=self.current_assistant_html, is_final_pass=True)
         
         from utils.history_logger import HistoryLogger

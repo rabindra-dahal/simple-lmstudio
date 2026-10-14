@@ -6,6 +6,9 @@ models/
 models/**
 **/models/
 **/models/**
+chat_history.json
+./chat_history.json
+*/chat_history.json
 
 # C extensions
 *.so

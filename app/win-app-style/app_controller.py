@@ -9,14 +9,17 @@ os.environ["GGML_VULKAN_DISABLE"] = "1"
 
 from PyQt6.QtCore import QObject, QTimer, QUrl, pyqtSlot
 from PyQt6.QtGui import QColor
-from PyQt6.QtWidgets import QApplication  # 🚀 IMPORT APPLICATION LEVEL REGISTERS
+from PyQt6.QtWidgets import QApplication
 from PyQt6.QtWebChannel import QWebChannel
+
+# Modular interface and utility asset bindings
 from ui.chat_renderer import ChatRenderer
 from utils.model_service import ModelService
 from utils.clipboard_manager import ClipboardManager
+from utils.export_service import ExportService  # 🚀 IMPORT NEW EXPORT LOGIC
 
 class AppController(QObject):
-    """Refactored coordinator focused strictly on responsive Chromium WebEngine text loops."""
+    """Ultra-lean core orchestrating asynchronous token streams and sub-service bindings."""
     def __init__(self, main_window):
         super().__init__()
         self.win = main_window   
@@ -34,21 +37,21 @@ class AppController(QObject):
         self.active_message_id = 0
         self.active_message_running = False  
         
-        # Setup Javascript-to-Python direct bridge layer interlock channels
+        # Initialize Javascript WebChannel native bridge registers
         self.web_channel = QWebChannel()
         self.web_channel.registerObject("pyBackend", self)
         self.win.chat_panel.chat_history.page().setWebChannel(self.web_channel)
         
-        # Connect visual layout slots
+        # Connect visual interaction signals
         self.win.chat_panel.stop_overlay_btn.clicked.connect(self.stop_generation)
         self.win.sidebar.toggle_theme_btn.clicked.connect(self.toggle_application_theme)
+        self.win.sidebar.export_chat_btn.clicked.connect(self.export_conversation_to_markdown)
         
         if hasattr(self.win.sidebar, 'clear_history_btn'):
             self.win.sidebar.clear_history_btn.clicked.connect(self.clear_logs_database)
 
     @pyqtSlot(int)
     def executeNativeCopy(self, msg_id: int):
-        """Processes full dialogue text card copies into Windows OS system registers smoothly [INDEX]."""
         mock_url_path = f"copy://{msg_id}"
         if self.clipboard_manager.copy_to_clipboard(mock_url_path):
             old_title = self.win.chat_panel.model_tag.text()
@@ -57,37 +60,24 @@ class AppController(QObject):
 
     @pyqtSlot(str)
     def executeDirectTextCopy(self, text_content: str):
-        """🚀 THE CODE PILL DIRECT OVERRIDE: Captures isolated raw code content instantly without text headers!"""
         clipboard = QApplication.clipboard()
         clipboard.clear(mode=clipboard.Mode.Clipboard)
         clipboard.setText(text_content.strip(), mode=clipboard.Mode.Clipboard)
-        
-        # Flash a unique confirmation layout message on the top header title tag
         old_title = self.win.chat_panel.model_tag.text()
         self.win.chat_panel.model_tag.setText("💻 Source Code Block Copied Successfully!")
         QTimer.singleShot(2000, lambda: self.win.chat_panel.model_tag.setText(old_title))
 
-    def scan_models_directory(self):
-        active_path = self.model_service.scan_directory(self.win.sidebar.model_selector, self.win.models_dir)
-        self.win.active_model_path = active_path
-        self.win.chat_panel.model_tag.setText(
-            f"Active Model: {self.win.sidebar.model_selector.currentText()}" if active_path else "Active Model: None Detected"
-        )
-
-    def handle_model_changed(self, index):
-        path = self.win.sidebar.model_selector.itemData(index)
-        if path:
-            self.win.active_model_path = path
-            self.win.chat_panel.model_tag.setText(f"Active Model: {self.win.sidebar.model_selector.itemText(index)}")
-            self.model_service.storage.save_model(self.win.active_model_path)
+    def export_conversation_to_markdown(self):
+        """Delegates formatting and compilation matrices to ExportService module."""
+        active_model = self.win.sidebar.model_selector.currentText()
+        success = ExportService.compile_and_save_md(self.win, self.chat_history_elements, active_model)
+        
+        old_title = self.win.chat_panel.model_tag.text()
+        if success:
+            self.win.chat_panel.model_tag.setText("📝 Chat Logs Saved Successfully as Markdown!")
         else:
-            self.win.active_model_path = ""
-
-    def load_persistent_settings(self):
-        verified_path = self.model_service.verify_and_apply_history(self.win.sidebar.model_selector)
-        if verified_path:
-            self.win.active_model_path = verified_path
-            self.win.chat_panel.model_tag.setText(f"Active Model: {self.win.sidebar.model_selector.currentText()}")
+            self.win.chat_panel.model_tag.setText("⚠️ Cannot export an empty chat history workspace!")
+        QTimer.singleShot(2000, lambda: self.win.chat_panel.model_tag.setText(old_title))
 
     def execute_prompt_generation(self):
         if not self.win.active_model_path or (self.worker and self.worker.isRunning()):
@@ -104,7 +94,6 @@ class AppController(QObject):
         
         self.active_message_id = self.clipboard_manager.get_next_index_id()
         self.active_message_running = False 
-        
         self.win.canvas_service.redraw_entire_chat_canvas(self, streaming_text="")
         
         from engine_logic import InferenceWorker
@@ -128,7 +117,6 @@ class AppController(QObject):
         self.active_message_running = False  
         self.chat_history_elements.append({"role": "assistant", "text": self.current_assistant_html})
         self.clipboard_manager.store_response(self.current_assistant_html)
-        
         self.win.canvas_service.redraw_entire_chat_canvas(self, streaming_text=self.current_assistant_html, is_final_pass=True)
         
         from utils.history_logger import HistoryLogger
@@ -138,9 +126,7 @@ class AppController(QObject):
 
     def toggle_application_theme(self):
         self.current_theme = "light" if self.current_theme == "dark" else "dark"
-        self.win.sidebar.toggle_theme_btn.setText(
-            "🌓 Switch to Dark Mode" if self.current_theme == "light" else "🌓 Switch to Light Mode"
-        )
+        self.win.sidebar.toggle_theme_btn.setText("🌓 Switch to Dark Mode" if self.current_theme == "light" else "🌓 Switch to Light Mode")
         
         from ui.theme_manager import ThemeManager
         c = ThemeManager.get_styles(self.current_theme)
@@ -175,6 +161,26 @@ class AppController(QObject):
             self.worker.quit()
             self.worker.wait()
             self.worker = None
+
+    def scan_models_directory(self):
+        active_path = self.model_service.scan_directory(self.win.sidebar.model_selector, self.win.models_dir)
+        self.win.active_model_path = active_path
+        self.win.chat_panel.model_tag.setText(f"Active Model: {self.win.sidebar.model_selector.currentText()}" if active_path else "Active Model: None Detected")
+
+    def handle_model_changed(self, index):
+        path = self.win.sidebar.model_selector.itemData(index)
+        if path:
+            self.win.active_model_path = path
+            self.win.chat_panel.model_tag.setText(f"Active Model: {self.win.sidebar.model_selector.itemText(index)}")
+            self.model_service.storage.save_model(self.win.active_model_path)
+        else:
+            self.win.active_model_path = ""
+
+    def load_persistent_settings(self):
+        verified_path = self.model_service.verify_and_apply_history(self.win.sidebar.model_selector)
+        if verified_path:
+            self.win.active_model_path = verified_path
+            self.win.chat_panel.model_tag.setText(f"Active Model: {self.win.sidebar.model_selector.currentText()}")
 
     def save_exit_state(self):
         self.model_service.save_state(self.win.models_dir, self.win.active_model_path)

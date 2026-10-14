@@ -3,12 +3,11 @@ import markdown
 from ui.theme_manager import ThemeManager
 
 class ChatRenderer:
-    """Compiles modern, responsive chat components utilizing native CSS Flexbox layers and JS bridges."""
+    """Compiles modern, responsive chat components utilizing native CSS Flexbox layers and clean vector icon buttons."""
     
     @classmethod
     def get_global_css_header(cls, theme_mode: str = "dark") -> str:
         c = ThemeManager.get_styles(theme_mode)
-        # 🚀 Double curly braces {{ }} allow JavaScript to reside safely inside an f-string!
         return f"""
         <style>
             * {{ box-sizing: border-box; }}
@@ -46,8 +45,25 @@ class ChatRenderer:
             }}
             .header-table {{ width: 100%; margin-bottom: 10px; border-collapse: collapse; }}
             .label-ai {{ color: {c['accent_cyan']}; font-size: 11px; font-weight: 700; letter-spacing: 0.5px; }}
-            .copy-btn {{ color: {c['text_muted']}; text-decoration: none; font-size: 11px; font-weight: 600; cursor: pointer; }}
-            .copy-btn:hover {{ color: {c['accent_cyan']}; }}
+            
+            /* MINIMALIST VECTOR ICON BUTTON STYLING */
+            .copy-icon-btn {{
+                cursor: pointer;
+                display: inline-block;
+                padding: 4px;
+                border-radius: 4px;
+                transition: background-color 0.2s;
+            }}
+            .copy-icon-btn:hover {{
+                background-color: {c['input_bg']};
+            }}
+            .copy-icon-btn svg {{
+                fill: {c['text_muted']};
+                transition: fill 0.2s;
+            }}
+            .copy-icon-btn:hover svg {{
+                fill: {c['accent_cyan']};
+            }}
             
             .content {{ font-size: 14px; line-height: 1.5; color: {c['text_main']}; }}
             h1, h2, h3 {{ color: {c['accent_cyan']}; margin-top: 12px; margin-bottom: 6px; font-weight: 600; }}
@@ -59,7 +75,6 @@ class ChatRenderer:
             pre {{ background-color: {c['input_bg']}; padding: 12px; border-radius: 6px; border: 1px solid {c['border']}; font-family: 'Consolas', monospace; overflow-x: auto; margin: 10px 0; }}
         </style>
         
-        <!-- THE NATIVE JAVA INTERCEPTOR CORE: Securely binds bridge events -->
         <script src="qrc:///qtwebchannel/qwebchannel.js"></script>
         <script>
             var backend = null;
@@ -81,6 +96,17 @@ class ChatRenderer:
         """
 
     @staticmethod
+    def get_copy_svg_markup(message_id: int) -> str:
+        """Compiles a clean, pure SVG dual-square copy button matching Google AI Studio."""
+        return f"""
+        <div class="copy-icon-btn" onclick="triggerCopy({message_id})" title="Copy to Clipboard">
+            <svg xmlns="http://w3.org" height="18px" viewBox="0 -960 960 960" width="18px">
+                <path d="M360-240q-33 0-56.5-23.5T280-320v-480q0-33 23.5-56.5T360-880h360q33 0 56.5 23.5T800-800v480q0 33-23.5 56.5T720-240H360Zm0-80h360v-480H360v480ZM200-80q-33 0-56.5-23.5T120-160v-560h80v560h440v80H200Zm160-240v-480 480Z"/>
+            </svg>
+        </div>
+        """
+
+    @staticmethod
     def get_assistant_bubble_html(response_text: str, message_id: int, is_streaming: bool, theme_mode: str = "dark") -> str:
         c = ThemeManager.get_styles(theme_mode)
         if is_streaming:
@@ -88,7 +114,9 @@ class ChatRenderer:
         else:
             formatted_text = markdown.markdown(response_text, extensions=['fenced_code', 'tables'])
 
-        action_button = " " if is_streaming else f'<span class="copy-btn" onclick="triggerCopy({message_id})">📋 COPY TEXT</span>'
+        # 🚀 FIXED THE STRUCTURE UNIFORMITY:
+        # We always supply the exact same container markup architecture so JavaScript doesn't get lost
+        action_button = " " if is_streaming else ChatRenderer.get_copy_svg_markup(message_id)
         
         return f"""
         <div class="chat-row ai-row" id="ai_row_{message_id}">
@@ -96,7 +124,7 @@ class ChatRenderer:
                 <table class="header-table">
                     <tr>
                         <td align="left" class="label-ai">✨ LOCAL ASSISTANT</td>
-                        <!-- 🚀 CONTAINER ANCHOR HOOK: Target cell for finalize pass -->
+                        <!-- 🚀 ALWAYS ENSURE THE HOOK CLASS IS INSTANTIATED PROPERLY -->
                         <td align="right" class="copy-btn-container">{action_button}</td>
                     </tr>
                 </table>
@@ -107,7 +135,6 @@ class ChatRenderer:
 
     @staticmethod
     def compile_markdown_payload(raw_text: str, theme_mode: str = "dark") -> str:
-        """Exposes clean standalone markdown transformations directly to the canvas service [INDEX]."""
         c = ThemeManager.get_styles(theme_mode)
         html = markdown.markdown(raw_text, extensions=['fenced_code', 'tables'])
         html = html.replace('<h1>', f'<h1 style="color: {c["accent_cyan"]}; font-size: 18px; font-weight: 600; margin-top: 0;">')

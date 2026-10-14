@@ -1,48 +1,46 @@
 # canvas_service.py
 import json
+from PyQt6.QtCore import QTimer
 from ui.theme_manager import ThemeManager
 from ui.chat_renderer import ChatRenderer
-from PyQt6.QtCore import QTimer
 
 class CanvasService:
     """Authoritative repaint engine driving smooth, flicker-free Chromium WebEngine views."""
     
     @staticmethod
     def redraw_entire_chat_canvas(ctrl, streaming_text: str = None, is_final_pass: bool = False):
-        """🚀 THE ZERO-FLICKER SCROLL CORE: Injects fragments and forces bottom auto-scroll pins [INDEX]."""
-        
-        # JAVASCRIPT SCROLL PIN ANCHOR: Automatically sticks the viewport window right at the bottom edge!
+        """🚀 THE TOTAL SOLUTION: Injects fragments, converts markdown, and restores vector icons cleanly."""
         js_scroll_bottom = "window.scrollTo(0, document.body.scrollHeight);"
 
-        # 1. Final Generation Markdown Compilation pass
+        # 1. 🚀 THE FINAL COMPILATION PASS FIX:
         if is_final_pass:
             compiled_md_content = ChatRenderer.compile_markdown_payload(streaming_text, ctrl.current_theme)
             escaped_html = compiled_md_content.replace("\\", "\\\\").replace("'", "\\'").replace("\n", "\\n")
             
-            # Update target AI card content
+            # Step A: Update the response content inside the active card
             js_update_content = f"document.getElementById('msg_block_{ctrl.active_message_id}').innerHTML = '{escaped_html}';"
             ctrl.win.chat_panel.chat_history.page().runJavaScript(js_update_content)
             
-            # Restore clipboard button layout frame
-            action_btn_html = f'<span class=\"copy-btn\" onclick=\"triggerCopy({ctrl.active_message_id})\">📋 COPY TEXT</span>'
-            js_restore_btn = f"document.querySelector('#ai_row_{ctrl.active_message_id} .copy-btn-container').innerHTML = '{action_btn_html}';"
+            # Step B: 🚀 THE NATIVE BACKTICK RECONSTRUCTION:
+            # Using clean JavaScript backticks (`) bypasses all nested quote collisions,
+            # forcing the dual-square icon to render instantly on your laptop!
+            svg_markup = ChatRenderer.get_copy_svg_markup(ctrl.active_message_id)
+            js_restore_btn = f"document.querySelector('#ai_row_{ctrl.active_message_id} .copy-btn-container').innerHTML = `{svg_markup}`;"
             ctrl.win.chat_panel.chat_history.page().runJavaScript(js_restore_btn)
             
-            # 🚀 Force auto-scroll pin on finalize step
+            # Anchor window focus strictly at the bottom
             ctrl.win.chat_panel.chat_history.page().runJavaScript(js_scroll_bottom)
             return
 
-        # 2. Incremental streaming tokens step
+        # 2. Fast tracking incremental injections during active streaming passes
         if streaming_text is not None and ctrl.active_message_running:
             safe_js_text = json.dumps(streaming_text.replace('\n', '<br>') + " ▌")
             js_patch_cmd = f"document.getElementById('msg_block_{ctrl.active_message_id}').innerHTML = {safe_js_text};"
             ctrl.win.chat_panel.chat_history.page().runJavaScript(js_patch_cmd)
-            
-            # 🚀 Force auto-scroll pin on active token step so you can watch text print out!
             ctrl.win.chat_panel.chat_history.page().runJavaScript(js_scroll_bottom)
             return
 
-        # 3. Full layout build pass (Fires when user sends a prompt query)
+        # 3. Fallback full page redraw loop for new entries
         canvas_html = ChatRenderer.get_global_css_header(ctrl.current_theme)
         for idx, element in enumerate(ctrl.chat_history_elements):
             if element["role"] == "user":
@@ -54,12 +52,7 @@ class CanvasService:
             canvas_html += ChatRenderer.get_assistant_bubble_html(streaming_text, ctrl.active_message_id, True, ctrl.current_theme)
             ctrl.active_message_running = True
             
-        # Write HTML payload to browser window
         ctrl.win.chat_panel.chat_history.setHtml(canvas_html)
-        
-        # 🚀 THE CRITICAL FIX: 
-        # Wait a tiny fraction of a second for Chromium to load the document tags,
-        # then forcefully anchor the viewport right at the base of the page canvas.
         QTimer.singleShot(80, lambda: ctrl.win.chat_panel.chat_history.page().runJavaScript(js_scroll_bottom))
 
     @staticmethod

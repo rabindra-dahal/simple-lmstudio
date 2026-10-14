@@ -1,6 +1,5 @@
 # chat_renderer.py
 import markdown
-import urllib.parse  # 🚀 CRITICAL FOR STABLE TEXT STRING INJECTIONS
 from .theme_manager import ThemeManager
 
 class ChatRenderer:
@@ -40,11 +39,6 @@ class ChatRenderer:
     def get_assistant_bubble_html(response_text: str, message_id: int, is_streaming: bool, theme_mode: str = "dark") -> str:
         c = ThemeManager.get_styles(theme_mode)
         
-        # 🚀 THE ABSOLUTE CLIPBOARD SAVE RESOLUTION:
-        # Convert the entire raw assistant string block into a standard URL-safe token format string,
-        # completely preventing Windows array boundaries from crashing on long text sequences!
-        safe_encoded_payload = urllib.parse.quote(response_text)
-        
         if is_streaming:
             formatted_text = response_text.replace('\n', '<br>') + " ▌"
         else:
@@ -59,6 +53,7 @@ class ChatRenderer:
             formatted_text = formatted_text.replace('<code>', f'<code style="background-color: {c["input_bg"]}; color: #ff79c6; font-family: Consolas, monospace; padding: 2px 4px; border-radius: 4px; font-size: 13px;">')
             formatted_text = formatted_text.replace('<pre>', f'<pre style="background-color: {c["input_bg"]}; padding: 12px; border-radius: 6px; border: 1px solid {c["border"]}; font-family: Consolas, monospace; overflow-x: auto; margin: 10px 0;">')
 
+        # 🚀 THE FIXED ANCHOR ROUTINE: Passing a clean integer ID prevents QTextBrowser from blocking the link
         return f"""
         <div style="margin-bottom: 20px; text-align: left; width: 100%; clear: both;">
             <div style="background-color: {c['bubble_ai']}; border: 1px solid {c['border']};
@@ -69,7 +64,7 @@ class ChatRenderer:
                             ✨ LOCAL ASSISTANT
                         </td>
                         <td align="right">
-                            {" " if is_streaming else f'<a href="copy://{safe_encoded_payload}">📋 COPY TEXT</a>'}
+                            {" " if is_streaming else f'<a href="copy://{message_id}">📋 COPY TEXT</a>'}
                         </td>
                     </tr>
                 </table>

@@ -3,6 +3,7 @@ import os
 import sys
 
 # 🚀 SYSTEM DRIVER LAYER INTERLOCK
+# Completely blocks the Intel graphics driver from allocating a heavy Vulkan RAM heap.
 os.environ["VK_ICD_FILENAMES"] = ""      
 os.environ["DISABLE_VULKAN"] = "1"        
 os.environ["GGML_VULKAN_DISABLE"] = "1"   
@@ -12,11 +13,11 @@ from PyQt6.QtGui import QColor
 from PyQt6.QtWidgets import QApplication
 from PyQt6.QtWebChannel import QWebChannel
 
-# Modular interface and utility asset bindings
+# Modular interface and utility asset bindings matching your directory mapping
 from ui.chat_renderer import ChatRenderer
 from utils.model_service import ModelService
 from utils.clipboard_manager import ClipboardManager
-from utils.export_service import ExportService  # 🚀 IMPORT NEW EXPORT LOGIC
+from utils.export_service import ExportService
 
 class AppController(QObject):
     """Ultra-lean core orchestrating asynchronous token streams and sub-service bindings."""
@@ -36,6 +37,9 @@ class AppController(QObject):
         self.chat_history_elements = []  
         self.active_message_id = 0
         self.active_message_running = False  
+        
+        # 🚀 THE HIGH-PERFORMANCE ACTIVE STREAM ACCUMULATOR BUFFER
+        self.token_buffer_counter = 0
         
         # Initialize Javascript WebChannel native bridge registers
         self.web_channel = QWebChannel()
@@ -94,6 +98,10 @@ class AppController(QObject):
         
         self.active_message_id = self.clipboard_manager.get_next_index_id()
         self.active_message_running = False 
+        
+        # 🚀 RESET MEMORY BUFFER COUNTER BEFORE FRESH GENERATIONS
+        self.token_buffer_counter = 0
+        
         self.win.canvas_service.redraw_entire_chat_canvas(self, streaming_text="")
         
         from engine_logic import InferenceWorker
@@ -104,8 +112,16 @@ class AppController(QObject):
         self.worker.start()
 
     def handle_stream_token(self, token):
+        """Streams text fragments using a 5-token update buffer to flatten RAM usage spikes."""
         self.current_assistant_html += token
-        self.win.canvas_service.redraw_entire_chat_canvas(self, streaming_text=self.current_assistant_html)
+        self.token_buffer_counter += 1
+        
+        # 🚀 REDDRAW THRESHOLD INTERLOCK:
+        # Only forces Chromium WebEngine Process to re-paint its canvas once every 5 tokens.
+        # This keeps the browser from flooding your system RAM allocations.
+        if self.token_buffer_counter >= 5:
+            self.win.canvas_service.redraw_entire_chat_canvas(self, streaming_text=self.current_assistant_html)
+            self.token_buffer_counter = 0
 
     def stop_generation(self):
         if self.worker and self.worker.isRunning():
@@ -117,6 +133,8 @@ class AppController(QObject):
         self.active_message_running = False  
         self.chat_history_elements.append({"role": "assistant", "text": self.current_assistant_html})
         self.clipboard_manager.store_response(self.current_assistant_html)
+        
+        # Force a final pass override to push any trailing buffered tokens onto the canvas
         self.win.canvas_service.redraw_entire_chat_canvas(self, streaming_text=self.current_assistant_html, is_final_pass=True)
         
         from utils.history_logger import HistoryLogger

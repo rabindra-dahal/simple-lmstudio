@@ -45,6 +45,8 @@ class InferenceWorker(QThread):
                     use_mmap=False,      # Direct RAM sequential reading instead of virtual page files
                     use_mlock=False      # Allows instant OS memory recycling
                 )
+                
+                
             finally:
                 os.dup2(old_stdout, 1)
                 os.dup2(old_stderr, 2)
